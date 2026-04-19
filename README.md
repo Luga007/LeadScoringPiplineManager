@@ -1,41 +1,59 @@
-# Project Name
+# 🎯 Lead Scoring & Pipeline Manager
 
-Short description of your project goes here.  
-Example: Lead Scoring & Pipeline Manager that analyzes leads and predicts conversion probability.
-
----
-
-## 🚀 Features
-
-- Upload CSV file with leads data  
-- Analyze conversion probability  
-- Get pricing and strategy recommendations  
-- Filter leads by KPI metrics  
-- Simple dashboard for insights  
+CRM-based Lead Scoring system that analyzes leads, predicts conversion probability, and provides sales strategy recommendations. Built with Streamlit and machine learning.
 
 ---
 
-## 📦 Requirements
+## 🚀 Project Overview
 
-- Python 3.10+  
-- pip  
-- virtualenv (optional but recommended)
+This application allows users (admins/sales teams) to upload CRM lead data via CSV and automatically:
+
+- Analyze each lead
+- Predict conversion probability
+- Recommend pricing and sales strategy
+- Display KPI metrics and insights in real-time dashboard
 
 ---
 
-## ⚙️ Installation
+## ✨ Features
+
+- 📂 Upload CSV file with leads data
+- 🧠 ML-based conversion probability prediction
+- 💰 Pricing recommendation per lead
+- 📊 KPI dashboard (high priority leads, conversion rate, total value)
+- 🔎 Advanced filtering:
+  - Budget slider
+  - Industry multiselect
+  - Conversion probability filter
+- 📈 Data visualization:
+  - Lead distribution charts (bar/line charts)
+- 📋 Interactive dataframe:
+  - Sorting
+  - Expandable details
+- 🎛 Streamlit sidebar controls
+
+---
+
+## 🛠️ Tech Stack
+
+- Python
+- Streamlit
+- Pandas / NumPy
+- Scikit-learn (for ML model)
+- Matplotlib / Plotly (for charts)
+
+---
+
+## ⚙️ Installation (Local Setup)
 
 Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
-
 Create virtual environment:
 
 python -m venv venv
 
-Activate it:
+Activate environment:
 
 Windows:
 
@@ -48,39 +66,53 @@ source venv/bin/activate
 Install dependencies:
 
 pip install -r requirements.txt
-▶️ How to Run
+▶️ Run the App
 
-Run the project:
+Start Streamlit app:
 
-python main.py
+streamlit run app.py
 
-If it's a web app:
+Then open in browser:
 
-python app.py
+http://localhost:8501
+☁️ Deployment (Streamlit Cloud)
 
-or
+This project is deployed on Streamlit Cloud.
 
-uvicorn main:app --reload
+Requirements:
+App must be connected to GitHub repository
+Must include requirements.txt
+Must have app.py as entry point
+Live App:
+
+👉 https://your-streamlit-app-url.streamlit.app
+
 📂 Project Structure
-project/
+lead-scoring-app/
 │
-├── main.py
 ├── app.py
+├── model.pkl
 ├── requirements.txt
 ├── data/
-├── models/
+├── utils/
+│   ├── preprocessing.py
+│   ├── prediction.py
+│
 └── README.md
-📊 How It Works
-Upload CSV file with leads
-System processes and analyzes data
-Machine learning model predicts conversion probability
-Results are displayed in dashboard
-Export or use insights for sales strategy
-🛠️ Technologies Used
-Python
-Pandas / NumPy
-Scikit-learn
-Flask / FastAPI (if used)
+📊 Key Metrics
+High Priority Leads
+Conversion Rate
+Total Lead Value
+Average Deal Size
+Probability Distribution
+📌 How It Works
+Admin uploads CSV file
+Data is cleaned and preprocessed
+ML model calculates conversion probability
+System assigns:
+Lead priority
+Pricing recommendation
+Dashboard visualizes insights
 📄 License
 
 This project is licensed under the MIT License.
@@ -88,7 +120,8 @@ This project is licensed under the MIT License.
 
 ---
 
-Если хочешь, могу дальше:
+Если хочешь дальше улучшить проект, я могу:
 - :contentReference[oaicite:0]{index=0}
-- или :contentReference[oaicite:1]{index=1}
+- :contentReference[oaicite:1]{index=1}
+- или :contentReference[oaicite:2]{index=2}
 - или :contentReference[oaicite:2]{index=2}
