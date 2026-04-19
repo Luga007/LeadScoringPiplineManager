@@ -1,10 +1,18 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-# Example:
-# postgresql://username:password@localhost:5432/dbname
 
-DATABASE_URL = "postgresql+psycopg2://postgres:your_password@localhost:5432/lead_db"
+
+from sqlalchemy.engine import URL
+
+DATABASE_URL = URL.create(
+    drivername="postgresql+psycopg2",
+    username="postgres",
+    password="root",  # no need to encode
+    host="localhost",
+    port=5432,
+    database="lead_db"
+)
 
 engine = create_engine(
     DATABASE_URL,

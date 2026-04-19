@@ -3,7 +3,7 @@ from core.database import engine, Base
 
 from models.model import Lead, Interaction, ScoringHistory
 
-from app.api.v1 import leads, upload, analytics
+from api.v1 import leads, upload, analytics
 
 app = FastAPI(
     title="Lead Scoring & Pipeline Manager",
