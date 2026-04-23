@@ -6,7 +6,7 @@ from openai import OpenAI
 # -----------------------
 # CONFIG
 # -----------------------
-API_URL = "https://your-backend.onrender.com/api/v1"
+API_URL = "https://leadscoringpiplinemanager.onrender.com/api/v1"
 
 client = OpenAI(api_key="OPENAI_API_KEY")  # use env variable in real projects
 
