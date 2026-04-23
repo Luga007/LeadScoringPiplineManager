@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from core.database import get_db
-from models.model import Lead
+from backend.app.core.database import get_db
+from backend.app.models.model import Lead
 
 router = APIRouter()
 

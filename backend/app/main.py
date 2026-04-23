@@ -1,10 +1,10 @@
 from fastapi import FastAPI
-from core.database import engine, Base
-
-from models.model import Lead, Interaction, ScoringHistory
+from backend.app.core.database import engine, Base
+from fastapi.middleware.cors import CORSMiddleware
+from backend.app.models.model import Lead, Interaction, ScoringHistory
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.v1 import leads, upload, analytics
+from backend.app.api.v1 import leads, upload, analytics
 
 app = FastAPI(
     title="Lead Scoring & Pipeline Manager",
