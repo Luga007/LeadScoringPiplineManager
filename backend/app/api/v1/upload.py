@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, Depends
+from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
 import pandas as pd
 from sqlalchemy.orm import Session
 
@@ -11,24 +11,45 @@ router = APIRouter()
 
 @router.post("/")
 async def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
-    df = pd.read_csv(file.file)
+    try:
+        df = pd.read_csv(file.file)
 
-    created = 0
+        # 1. Clean duplicates inside CSV
+        df = df.drop_duplicates(subset=["email"])
 
-    for _, row in df.iterrows():
-        lead = Lead(
-            name=row.get("name"),
-            email=row.get("email"),
-            company=row.get("company"),
-            industry=row.get("industry"),
-            budget=row.get("budget", 0)
-        )
+        # 2. Clear old data FIRST (important)
+        db.query(Lead).delete()
+        db.commit()
 
-        lead.conversion_probability = calculate_conversion_probability(lead)
+        leads_created = []
 
-        db.add(lead)
-        created += 1
+        for _, row in df.iterrows():
+            lead = Lead(
+                name=row.get("name"),
+                email=row.get("email"),
+                company=row.get("company"),
+                industry=row.get("industry"),
+                budget=row.get("budget", 0),
+            )
 
-    db.commit()
+            lead.conversion_probability = calculate_conversion_probability(lead)
 
-    return {"message": f"{created} leads uploaded successfully"}
+            db.add(lead)
+            leads_created.append(lead)
+
+        db.commit()
+
+        return {
+            "message": f"{len(leads_created)} leads uploaded",
+            "sample": [
+                {
+                    "name": l.name,
+                    "probability": l.conversion_probability
+                }
+                for l in leads_created[:5]
+            ]
+        }
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
