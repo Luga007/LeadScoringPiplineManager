@@ -4,11 +4,11 @@ import requests
 from openai import OpenAI
 
 # -----------------------
-# ⚙️ CONFIG
+# CONFIG
 # -----------------------
 API_URL = "http://localhost:8000/api/v1"
 
-client = OpenAI(api_key="OPENAI_API_KEY")  # 🔐 use env variable in real projects
+client = OpenAI(api_key="OPENAI_API_KEY")  # use env variable in real projects
 
 st.set_page_config(page_title="Lead Scoring", layout="wide")
 
@@ -16,7 +16,7 @@ st.title("🎯 Lead Scoring & Pipeline Manager")
 
 
 # -----------------------
-# 🤖 AI FUNCTION
+#  AI FUNCTION
 # -----------------------
 def ask_ai(question, df):
     if df.empty:
@@ -50,7 +50,7 @@ CRM DATA:
 
 
 # -----------------------
-# 📥 Upload CSV
+# Upload CSV
 # -----------------------
 st.sidebar.header("Upload CSV")
 
@@ -67,7 +67,7 @@ if uploaded_file:
 
 
 # -----------------------
-# 📊 Filters
+# Filters
 # -----------------------
 st.sidebar.header("Filters")
 
@@ -93,7 +93,7 @@ selected_industries = st.sidebar.multiselect(
 
 
 # -----------------------
-# 📡 Fetch Leads
+# Fetch Leads
 # -----------------------
 params = {"min_prob": min_prob}
 
@@ -112,7 +112,7 @@ df = pd.DataFrame(data)
 
 
 # -----------------------
-# 📊 Local Filters
+# Local Filters
 # -----------------------
 if not df.empty:
     df = df[df["budget"] >= min_budget]
@@ -120,7 +120,7 @@ if not df.empty:
 
 
 # -----------------------
-# 📈 KPIs
+# KPIs
 # -----------------------
 if not df.empty:
     col1, col2, col3, col4 = st.columns(4)
@@ -134,7 +134,7 @@ else:
 
 
 # -----------------------
-# 📊 Chart
+# Chart
 # -----------------------
 st.subheader("Conversion Distribution")
 
@@ -143,7 +143,7 @@ if not df.empty:
 
 
 # -----------------------
-# 📋 Table
+# Table
 # -----------------------
 st.subheader("Leads Table")
 
@@ -152,9 +152,9 @@ if not df.empty:
 
 
 # =====================================================
-# 🤖 AI CHAT (CLEAN CHATGPT STYLE UI)
+# AI CHAT (CLEAN CHATGPT STYLE UI)
 # =====================================================
-st.subheader("🤖 AI CRM Assistant")
+st.subheader("AI CRM Assistant")
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
