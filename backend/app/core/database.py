@@ -1,36 +1,49 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
+# -----------------------
+# DATABASE URL
+# -----------------------
+DATABASE_URL = os.getenv("DATABASE_URL")
 
+# -----------------------
+# SAFETY CHECK (IMPORTANT)
+# -----------------------
+if not DATABASE_URL:
+    raise RuntimeError(
+        "DATABASE_URL is not set. "
+        "Add it in your environment variables (Render / .env)."
+    )
 
-from sqlalchemy.engine import URL
-
-DATABASE_URL = URL.create(
-    drivername="postgresql+psycopg2",
-    username="postgres",
-    password="root",  # no need to encode
-    host="localhost",
-    port=5432,
-    database="lead_db"
-)
-
+# -----------------------
+# ENGINE
+# -----------------------
 engine = create_engine(
     DATABASE_URL,
-    pool_pre_ping=True,   #
+    pool_pre_ping=True,   # checks connection before using it
     pool_size=10,
-    max_overflow=20
+    max_overflow=20,
+    future=True
 )
 
+# -----------------------
+# SESSION
+# -----------------------
 SessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
     bind=engine
 )
 
+# -----------------------
+# BASE MODEL
+# -----------------------
 Base = declarative_base()
 
-
-# Dependency for FastAPI
+# -----------------------
+# FASTAPI DEPENDENCY
+# -----------------------
 def get_db():
     db = SessionLocal()
     try:
