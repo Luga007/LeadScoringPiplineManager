@@ -2,12 +2,20 @@ from fastapi import FastAPI
 from core.database import engine, Base
 
 from models.model import Lead, Interaction, ScoringHistory
-
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from api.v1 import leads, upload, analytics
 
 app = FastAPI(
     title="Lead Scoring & Pipeline Manager",
     version="1.0.0"
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Create tables in Postgres
