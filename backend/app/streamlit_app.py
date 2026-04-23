@@ -8,7 +8,7 @@ from openai import OpenAI
 # -----------------------
 API_URL = "https://leadscoringpiplinemanager.onrender.com/api/v1"
 
-client = OpenAI(api_key="OPENAI_API_KEY")  # use env variable in real projects
+client = OpenAI(api_key="OPENAI_API_KEY")  
 
 st.set_page_config(page_title="Lead Scoring", layout="wide")
 
