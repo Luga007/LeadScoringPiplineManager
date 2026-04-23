@@ -2,13 +2,14 @@ import streamlit as st
 import pandas as pd
 import requests
 from openai import OpenAI
+import streamlit as st
 
 # -----------------------
 # CONFIG
 # -----------------------
 API_URL = "https://leadscoringpiplinemanager.onrender.com/api/v1"
 
-client = OpenAI(api_key="OPENAI_API_KEY")  
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 st.set_page_config(page_title="Lead Scoring", layout="wide")
 
@@ -22,7 +23,7 @@ def ask_ai(question, df):
     if df.empty:
         return "No data available for analysis."
 
-    context = df.head(20).to_string()
+    context = df.head(30).to_csv(index=False)
 
     response = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -57,7 +58,9 @@ st.sidebar.header("Upload CSV")
 uploaded_file = st.sidebar.file_uploader("Upload leads CSV", type=["csv"])
 
 if uploaded_file:
-    files = {"file": uploaded_file.getvalue()}
+    files = {
+    "file": (uploaded_file.name, uploaded_file, "text/csv")
+    }
     response = requests.post(f"{API_URL}/upload", files=files)
 
     if response.status_code == 200:
