@@ -25,6 +25,26 @@ def ask_ai(question, df):
 
     context = df.head(30).to_csv(index=False)
 
+    response = client.responses.create(
+        model="gpt-4o-mini",
+        input=[
+            {
+                "role": "system",
+                "content": "You are a CRM AI assistant. You analyze sales leads and suggest actions."
+            },
+            {
+                "role": "user",
+                "content": f"Question: {question}\n\nCRM DATA:\n{context}"
+            }
+        ]
+    )
+
+    return response.output_text
+    if df.empty:
+        return "No data available for analysis."
+
+    context = df.head(30).to_csv(index=False)
+
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
