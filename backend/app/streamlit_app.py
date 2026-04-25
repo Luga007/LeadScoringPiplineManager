@@ -9,7 +9,7 @@ import streamlit as st
 # -----------------------
 API_URL = "https://leadscoringpiplinemanager.onrender.com/api/v1"
 
-# client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 st.set_page_config(page_title="Lead Scoring", layout="wide")
 
