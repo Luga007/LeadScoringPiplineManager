@@ -207,6 +207,7 @@ elif page == "High Value Leads":
 
 # ⭐ Top Leads
 elif page == "Top Leads":
+
     st.subheader("⭐ Top Leads")
 
     if not df.empty:
@@ -244,7 +245,54 @@ Conversion: {lead['conversion_probability']}
             by="conversion_probability", ascending=False
         ).head(10)
         st.dataframe(top_leads, use_container_width=True)
+elif page == "Problem Board":
+    st.subheader("🧩 Problem Board (Trello Style)")
 
+    # session storage
+    if "problems" not in st.session_state:
+        st.session_state.problems = []
+
+    # -------------------
+    # ADD NEW PROBLEM
+    # -------------------
+    st.markdown("### ➕ Add New Problem")
+
+    title = st.text_input("Problem Title")
+    desc = st.text_area("Description")
+    priority = st.selectbox("Priority", ["Low", "Medium", "High"])
+
+    if st.button("Add Problem"):
+        if title:
+            st.session_state.problems.append({
+                "title": title,
+                "desc": desc,
+                "priority": priority
+            })
+            st.success("Problem added ✅")
+
+    # -------------------
+    # SHOW BOARD (LIKE TRELLO)
+    # -------------------
+    st.markdown("### 📋 Board")
+
+    if st.session_state.problems:
+        col1, col2, col3 = st.columns(3)
+
+        for p in st.session_state.problems:
+            card = f"""
+            **{p['title']}**  
+            {p['desc']}  
+            🏷 Priority: {p['priority']}
+            """
+
+            if p["priority"] == "High":
+                col1.warning(card)
+            elif p["priority"] == "Medium":
+                col2.info(card)
+            else:
+                col3.success(card)
+    else:
+        st.info("No problems yet")
 
 # 📋 All Leads
 elif page == "All Leads":
