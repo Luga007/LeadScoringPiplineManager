@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import requests
 from openai import OpenAI
-import streamlit as st
 
 # -----------------------
 # CONFIG
@@ -17,7 +16,7 @@ st.title("🎯 Lead Scoring & Pipeline Manager")
 
 
 # -----------------------
-#  AI FUNCTION
+#  AI FUNCTION (FIXED)
 # -----------------------
 def ask_ai(question, df):
     if df.empty:
@@ -40,34 +39,6 @@ def ask_ai(question, df):
     )
 
     return response.output_text
-    if df.empty:
-        return "No data available for analysis."
-
-    context = df.head(30).to_csv(index=False)
-
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {
-                "role": "system",
-                "content": (
-                    "You are a CRM AI assistant. "
-                    "You analyze sales leads, find insights, and suggest actions."
-                )
-            },
-            {
-                "role": "user",
-                "content": f"""
-Question: {question}
-
-CRM DATA:
-{context}
-"""
-            }
-        ]
-    )
-
-    return response.choices[0].message.content
 
 
 # -----------------------
@@ -79,7 +50,7 @@ uploaded_file = st.sidebar.file_uploader("Upload leads CSV", type=["csv"])
 
 if uploaded_file:
     files = {
-    "file": (uploaded_file.name, uploaded_file, "text/csv")
+        "file": (uploaded_file.name, uploaded_file, "text/csv")
     }
     response = requests.post(f"{API_URL}/upload", files=files)
 
@@ -165,8 +136,73 @@ if not df.empty:
     st.bar_chart(df["conversion_probability"])
 
 
+# =====================================================
+# NEW ANALYTICS TABLES
+# =====================================================
+
+# 🔹 Budget Summary
+st.subheader("💰 Budget Summary")
+
+if not df.empty:
+    budget_summary = pd.DataFrame({
+        "Metric": ["Min Budget", "Max Budget", "Average Budget", "Total Budget"],
+        "Value": [
+            df["budget"].min(),
+            df["budget"].max(),
+            int(df["budget"].mean()),
+            int(df["budget"].sum())
+        ]
+    })
+    st.table(budget_summary)
+
+
+# 🔹 Budget by Industry
+st.subheader("🏭 Budget by Industry")
+
+if not df.empty and "industry" in df.columns:
+    industry_budget = (
+        df.groupby("industry")["budget"]
+        .agg(["count", "sum", "mean"])
+        .reset_index()
+        .rename(columns={
+            "count": "Leads",
+            "sum": "Total Budget",
+            "mean": "Avg Budget"
+        })
+    )
+    st.dataframe(industry_budget, use_container_width=True)
+
+
+# 🔹 High Value Leads
+st.subheader("🔥 High Value Leads")
+
+if not df.empty:
+    high_value_df = df[df["budget"] > df["budget"].mean()]
+    st.dataframe(high_value_df, use_container_width=True)
+
+
+# 🔹 Conversion vs Budget
+st.subheader("📊 Conversion vs Budget")
+
+if not df.empty:
+    conv_budget = df[["conversion_probability", "budget"]].sort_values(
+        by="conversion_probability", ascending=False
+    )
+    st.dataframe(conv_budget, use_container_width=True)
+
+
+# 🔹 Top Leads
+st.subheader("⭐ Top Leads")
+
+if not df.empty:
+    top_leads = df.sort_values(
+        by="conversion_probability", ascending=False
+    ).head(10)
+    st.dataframe(top_leads, use_container_width=True)
+
+
 # -----------------------
-# Table
+# Main Table
 # -----------------------
 st.subheader("Leads Table")
 
@@ -175,7 +211,7 @@ if not df.empty:
 
 
 # =====================================================
-# AI CHAT (CLEAN CHATGPT STYLE UI)
+# AI CHAT
 # =====================================================
 st.subheader("AI CRM Assistant")
 
@@ -191,13 +227,11 @@ for msg in st.session_state.messages:
 user_msg = st.chat_input("Ask about your leads...")
 
 if user_msg:
-    # store user msg
     st.session_state.messages.append({"role": "user", "content": user_msg})
 
     with st.chat_message("user"):
         st.write(user_msg)
 
-    # AI response
     reply = ask_ai(user_msg, df)
 
     st.session_state.messages.append({"role": "assistant", "content": reply})
