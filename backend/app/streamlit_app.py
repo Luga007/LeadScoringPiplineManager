@@ -26,6 +26,7 @@ page = st.sidebar.radio(
         "High Value Leads",
         "Top Leads",
         "All Leads",
+        "Problem Board",
         "AI Assistant"
     ]
 )
@@ -55,6 +56,10 @@ def ask_ai(question, df):
 
     return response.output_text
 
+
+# -----------------------
+# TRELLO FUNCTION
+# -----------------------
 def create_trello_card(title, description):
     url = "https://api.trello.com/1/cards"
 
@@ -68,6 +73,7 @@ def create_trello_card(title, description):
 
     response = requests.post(url, params=query)
     return response.status_code
+
 
 # -----------------------
 # Upload CSV
@@ -144,7 +150,7 @@ if not df.empty:
 # PAGES
 # =====================================================
 
-# 🟢 Dashboard
+# 🟢 DASHBOARD
 if page == "Dashboard":
     if not df.empty:
         col1, col2, col3, col4 = st.columns(4)
@@ -161,7 +167,7 @@ if page == "Dashboard":
         st.bar_chart(df["conversion_probability"])
 
 
-# 💰 Budget Summary
+# 💰 BUDGET SUMMARY
 elif page == "Budget Summary":
     st.subheader("💰 Budget Summary")
 
@@ -178,7 +184,7 @@ elif page == "Budget Summary":
         st.table(budget_summary)
 
 
-# 🏭 Industry Analysis
+# 🏭 INDUSTRY ANALYSIS
 elif page == "Industry Analysis":
     st.subheader("🏭 Budget by Industry")
 
@@ -196,7 +202,7 @@ elif page == "Industry Analysis":
         st.dataframe(industry_budget, use_container_width=True)
 
 
-# 🔥 High Value Leads
+# 🔥 HIGH VALUE LEADS
 elif page == "High Value Leads":
     st.subheader("🔥 High Value Leads")
 
@@ -205,9 +211,8 @@ elif page == "High Value Leads":
         st.dataframe(high_value_df, use_container_width=True)
 
 
-# ⭐ Top Leads
+# ⭐ TOP LEADS + TRELOO
 elif page == "Top Leads":
-
     st.subheader("⭐ Top Leads")
 
     if not df.empty:
@@ -238,26 +243,26 @@ Conversion: {lead['conversion_probability']}
                 st.success("Sent to Trello ✅")
             else:
                 st.error("Failed ❌")
-    st.subheader("⭐ Top Leads")
+
+
+# 📋 ALL LEADS
+elif page == "All Leads":
+    st.subheader("Leads Table")
 
     if not df.empty:
-        top_leads = df.sort_values(
-            by="conversion_probability", ascending=False
-        ).head(10)
-        st.dataframe(top_leads, use_container_width=True)
-elif page == "Problem Board":
-    st.subheader("🧩 Problem Board (Trello Style)")
+        st.dataframe(df, use_container_width=True)
 
-    # session storage
+
+# 🧩 PROBLEM BOARD (TRELL0-LIKE)
+elif page == "Problem Board":
+    st.subheader("🧩 Problem Board")
+
     if "problems" not in st.session_state:
         st.session_state.problems = []
 
-    # -------------------
-    # ADD NEW PROBLEM
-    # -------------------
-    st.markdown("### ➕ Add New Problem")
+    st.markdown("### ➕ Add Problem")
 
-    title = st.text_input("Problem Title")
+    title = st.text_input("Title")
     desc = st.text_area("Description")
     priority = st.selectbox("Priority", ["Low", "Medium", "High"])
 
@@ -268,41 +273,29 @@ elif page == "Problem Board":
                 "desc": desc,
                 "priority": priority
             })
-            st.success("Problem added ✅")
+            st.success("Added ✅")
 
-    # -------------------
-    # SHOW BOARD (LIKE TRELLO)
-    # -------------------
     st.markdown("### 📋 Board")
 
-    if st.session_state.problems:
-        col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns(3)
 
-        for p in st.session_state.problems:
-            card = f"""
-            **{p['title']}**  
-            {p['desc']}  
-            🏷 Priority: {p['priority']}
-            """
+    for p in st.session_state.problems:
 
-            if p["priority"] == "High":
-                col1.warning(card)
-            elif p["priority"] == "Medium":
-                col2.info(card)
-            else:
-                col3.success(card)
-    else:
-        st.info("No problems yet")
+        card = f"""
+**{p['title']}**  
+{p['desc']}  
+🏷 {p['priority']}
+"""
 
-# 📋 All Leads
-elif page == "All Leads":
-    st.subheader("Leads Table")
-
-    if not df.empty:
-        st.dataframe(df, use_container_width=True)
+        if p["priority"] == "High":
+            col1.warning(card)
+        elif p["priority"] == "Medium":
+            col2.info(card)
+        else:
+            col3.success(card)
 
 
-# 🤖 AI Assistant
+# 🤖 AI ASSISTANT
 elif page == "AI Assistant":
     st.subheader("AI CRM Assistant")
 
@@ -327,5 +320,3 @@ elif page == "AI Assistant":
 
         with st.chat_message("assistant"):
             st.write(reply)
-
-
