@@ -4,8 +4,13 @@ from sqlalchemy.orm import Session
 from backend.app.core.database import get_db
 from backend.app.models.model import Lead
 from backend.app.services.ml_service import calculate_conversion_probability
+import requests
+from fastapi import APIRouter
 
 router = APIRouter()
+TRELLO_KEY = "your_key"
+TRELLO_TOKEN = "your_token"
+TRELLO_LIST_ID = "your_list_id"
 
 
 from sqlalchemy import distinct
@@ -52,3 +57,28 @@ def rescore_lead(lead_id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return {"old_score": old_score, "new_score": new_score}
+
+
+@router.post("/send-to-trello")
+def send_to_trello(lead: dict):
+    url = "https://api.trello.com/1/cards"
+
+    query = {
+        "key": TRELLO_KEY,
+        "token": TRELLO_TOKEN,
+        "idList": TRELLO_LIST_ID,
+        "name": f"Lead: {lead['name']}",
+        "desc": f"""
+Email: {lead['email']}
+Industry: {lead['industry']}
+Budget: {lead['budget']}
+Conversion: {lead['conversion_probability']}
+"""
+    }
+
+    response = requests.post(url, params=query)
+
+    return {
+        "status": response.status_code,
+        "message": response.text
+    }

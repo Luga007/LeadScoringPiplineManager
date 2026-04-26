@@ -55,6 +55,19 @@ def ask_ai(question, df):
 
     return response.output_text
 
+def create_trello_card(title, description):
+    url = "https://api.trello.com/1/cards"
+
+    query = {
+        'key': st.secrets["TRELLO_API_KEY"],
+        'token': st.secrets["TRELLO_TOKEN"],
+        'idList': st.secrets["TRELLO_LIST_ID"],
+        'name': title,
+        'desc': description
+    }
+
+    response = requests.post(url, params=query)
+    return response.status_code
 
 # -----------------------
 # Upload CSV
@@ -200,6 +213,36 @@ elif page == "Top Leads":
         top_leads = df.sort_values(
             by="conversion_probability", ascending=False
         ).head(10)
+
+        st.dataframe(top_leads, use_container_width=True)
+
+        st.subheader("📌 Send Lead to Trello")
+
+        selected_name = st.selectbox("Select Lead", top_leads["name"])
+
+        if st.button("Send to Trello"):
+            lead = top_leads[top_leads["name"] == selected_name].iloc[0]
+
+            title = f"Lead: {lead['name']}"
+            desc = f"""
+Email: {lead['email']}
+Industry: {lead['industry']}
+Budget: {lead['budget']}
+Conversion: {lead['conversion_probability']}
+"""
+
+            status = create_trello_card(title, desc)
+
+            if status == 200:
+                st.success("Sent to Trello ✅")
+            else:
+                st.error("Failed ❌")
+    st.subheader("⭐ Top Leads")
+
+    if not df.empty:
+        top_leads = df.sort_values(
+            by="conversion_probability", ascending=False
+        ).head(10)
         st.dataframe(top_leads, use_container_width=True)
 
 
@@ -236,3 +279,5 @@ elif page == "AI Assistant":
 
         with st.chat_message("assistant"):
             st.write(reply)
+
+

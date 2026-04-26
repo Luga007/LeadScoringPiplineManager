@@ -5,6 +5,7 @@ from backend.app.core.database import engine, Base
 from backend.app.models.model import Lead, Interaction, ScoringHistory
 from backend.app.api.v1 import leads, upload, analytics
 
+
 # -----------------------
 # APP INIT
 # -----------------------
