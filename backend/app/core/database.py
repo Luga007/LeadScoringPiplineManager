@@ -14,9 +14,7 @@ if not DATABASE_URL:
         "Add it in your environment variables (Render / .env)."
     )
 
-# -----------------------
-# ENGINE
-# -----------------------
+
 engine = create_engine(
     DATABASE_URL,
     pool_pre_ping=True,   # checks connection before using it
